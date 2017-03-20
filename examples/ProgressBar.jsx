@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import Wizard, { Step, Steps, Navigation } from '../src';
+import { Wizard, Step, Steps, Navigation } from '../src';
 import FirstStep from './components/FirstStep';
 import SecondStep from './components/SecondStep';
 import ThirdStep from './components/ThirdStep';

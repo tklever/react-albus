@@ -13,7 +13,8 @@
  */
 
 import React from 'react';
-import Wizard, { Step, Steps, Navigation } from '../src';
+import { Route } from 'react-router-dom';
+import { Wizard, Step, Steps, Navigation } from '../src';
 import FirstStep from './components/FirstStep';
 import SecondStep from './components/SecondStep';
 import ThirdStep from './components/ThirdStep';
@@ -21,31 +22,34 @@ import Next from './navigation/Next';
 import Previous from './navigation/Previous';
 
 const Routed = () =>
-  <Wizard routed>
-    <Steps>
-      <Step path="firstStep">
-        <FirstStep />
-        <Navigation>
-          <Next label="Continue" />
-        </Navigation>
-      </Step>
-      <Step path="secondStep">
-        <SecondStep />
-        <Navigation
-          render={({ next, previous }) =>
-            <div>
-              <Previous previous={previous} label="Back" />
-              <Next next={next} label="Continue" />
-            </div>}
-        />
-      </Step>
-      <Step path="thirdStep">
-        <ThirdStep />
-        <Navigation>
-          <Previous label="Back" />
-        </Navigation>
-      </Step>
-    </Steps>
-  </Wizard>;
+  <Route
+    render={({ history, match: { url } }) =>
+      <Wizard history={history} basename={url}>
+        <Steps>
+          <Step path="firstStep">
+            <FirstStep />
+            <Navigation>
+              <Next label="Continue" />
+            </Navigation>
+          </Step>
+          <Step path="secondStep">
+            <SecondStep />
+            <Navigation
+              render={({ next, previous }) =>
+                <div>
+                  <Previous previous={previous} label="Back" />
+                  <Next next={next} label="Continue" />
+                </div>}
+            />
+          </Step>
+          <Step path="thirdStep">
+            <ThirdStep />
+            <Navigation>
+              <Previous label="Back" />
+            </Navigation>
+          </Step>
+        </Steps>
+      </Wizard>}
+  />;
 
 export default Routed;

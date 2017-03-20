@@ -17,7 +17,7 @@ import * as api from '../src';
 describe('API', () => {
   it('should export the correct API', () => {
     expect(api).toMatchObject({
-      default: expect.any(Function),
+      Wizard: expect.any(Function),
       Step: expect.any(Function),
       Steps: expect.any(Function),
       Navigation: expect.any(Function),

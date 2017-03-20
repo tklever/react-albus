@@ -4,9 +4,14 @@ exports[`Wizard without render prop should render without steps 1`] = `
 <Wizard
   basename=""
   className=""
+  history={
+    Object {
+      "listen": [Function],
+      "replace": [Function],
+    }
+  }
   onNext={null}
   render={null}
-  routed={false}
 >
   <div
     className=""

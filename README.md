@@ -5,17 +5,18 @@
 > \-- _Albus Dumbledore_
 
 ## What is React [Albus](http://u.kanobu.ru/comments/images/3c682662-4e19-49c6-b85b-539db47ff838.gif)?
-React Albus is a React component library for building declarative multi-step flows (sometimes referred to as Wizards).  You are responsible for writing your own steps and configuring their ordering, but React Albus will maintain the flow-related state for you.
-React Albus also allows you to create routed and unrouted journeys, conditionally skip steps in your journey, and create custom navigation and progress elements to suit your needs.
+React Albus is a React component library for building declarative multi-step flows (also known as Wizards).  You are responsible for writing your own steps and configuring their ordering, but React Albus will maintain the flow-related state for you.
+
+React Albus also allows you to create routed flows, conditionally skip steps in your flow, and create custom elements to suit your needs.
 
 ## Example
 
-```js
+```jsx
 import React from 'react';
-import Wizard, { Step, Steps, Navigation } from 'react-albus';
+import { Wizard, Step, Steps, Navigation } from 'react-albus';
 
 const Simple = () =>
-  <Wizard routed>
+  <Wizard>
     <Steps>
       <Step path="firstStep">
         <h1>First Step</h1>
@@ -61,8 +62,6 @@ A function that will be called by Wizard to determine the next step to proceed t
 
 If you do not pass an `onNext` prop, `<Wizard>` will proceed directly to the next step.
 
-##### `routed`: bool *(optional)*
-If present, `<Wizard>` will use routing. This functionality allows the user to navigate through your flow using browser controls.
 ##### `className`: string *(optional)*
 CSS classes to be added to the `<div>` created by `<Wizard>`.
 ##### `render(wizard)`: function *(optional)*
@@ -109,16 +108,39 @@ A function that will be used as the render function of `<Navigation>`.
 ### `withWizard()`
 A higher order component that spreads [`context.wizard`](#context.wizard) across the wrapped component's props.
 
+---
+
 ### `context.wizard`
 `<Wizard>` adds this object to context with the following properties:
 
 * `step` (object): Describes the current step with signature: `{ path: string, name: string }`.
 * `steps` (array): Array of `step` objects in the order they were declared within `<Steps>`.
-* `location` (object): The [`Location`](https://github.com/ReactTraining/history/blob/v3/docs/Glossary.md#location) object exposed by [`history`](https://github.com/ReactTraining/history/tree/v3)
+* `history` (object): The backing [`history`](https://github.com/ReactTraining/history#properties) object.
 * `next()` (function): Moves to the next step in order.
 * `previous()` (function): Moves to the previous step in order.
 * `go(n)` (function): Moves *n* steps in history.
 * `push(path)` (function): Moves to the step with prop `path`.
+
+## Usage with React Router
+
+Internally, React Albus uses [history](https://github.com/ReactTraining/history) to maintain the ordering of steps.  This makes integrating with React Router (or any other router) as easy as providing Albus with a `history` object and a `basename` where it is living.
+
+```jsx
+import React from 'react';
+import { Route } from 'react-router-dom';
+import { Wizard } from 'react-albus';
+
+const RoutedWizard = () =>
+  <Route
+    render={({ match: { url }, history }) =>
+      <Wizard history={history} basename={url}>
+        ...
+      </Wizard>}
+  />;
+
+export default RoutedWizard;
+```
+
 
 ## Contributing
 We welcome Your interest in the American Express Open Source Community on Github. Any Contributor to any Open Source Project managed by the American Express Open Source Community must accept and sign an Agreement indicating agreement to the terms below. Except for the rights granted in this Agreement to American Express and to recipients of software distributed by American Express, You reserve all right, title, and interest, if any, in and to Your Contributions. Please [fill out the Agreement](http://goo.gl/forms/mIHWH1Dcuy).
