@@ -50,7 +50,6 @@ Steps.defaultProps = {
 
 Steps.contextTypes = {
   wizard: PropTypes.object,
-  history: PropTypes.object,
 };
 
 export default Steps;

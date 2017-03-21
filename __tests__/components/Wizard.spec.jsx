@@ -14,39 +14,40 @@
 
 import React from 'react';
 import { mount } from 'enzyme';
-import * as history from 'history';
 
-import Wizard from '../../src';
-
-history.createHistory = history.createMemoryHistory;
+import { Wizard } from '../../src';
 
 describe('Wizard', () => {
+  let mounted;
   let setSteps;
   let step;
   let next;
   let previous;
   let push;
   let go;
-  let location;
 
   describe('without render prop', () => {
-    it('should render without steps', () => {
-      const mounted = mount(
-        <Wizard />,
-      );
+    beforeEach(() => {
+      const history = {
+        replace: () => null,
+        listen: () => () => null,
+      };
 
+      mounted = mount(
+        <Wizard history={history} />,
+      );
+    });
+
+    it('should render without steps', () => {
       expect(mounted).toMatchSnapshot();
+    });
+
+    afterEach(() => {
+      mounted.unmount();
     });
   });
 
   describe('with no other props', () => {
-    let mounted;
-    const context = {
-      history: {
-        push: jest.fn(),
-      },
-    };
-
     beforeEach(() => {
       mounted = mount(
         <Wizard
@@ -67,7 +68,6 @@ describe('Wizard', () => {
             return <noscript />;
           }}
         />,
-        { context },
       );
 
       setSteps([
@@ -98,9 +98,9 @@ describe('Wizard', () => {
       expect(step).toEqual({ path: 'gryffindor' });
     });
 
-    it('should pass history actions to it\'s parent', () => {
+    it('should do nothing if an invalid step is pushed', () => {
       push('hufflepuff');
-      expect(context.history.push).toHaveBeenCalled();
+      expect(step).toEqual({ path: 'gryffindor' });
     });
 
     it('should unlisten on unmount', () => {
@@ -108,13 +108,17 @@ describe('Wizard', () => {
       push('slytherin');
       expect(step.path).toEqual('gryffindor');
     });
+
+    afterEach(() => {
+      mounted.unmount();
+    });
   });
 
   describe('with onNext prop', () => {
     const onNext = jest.fn((onNextStep, onNextSteps, onNextPush) => onNextPush());
 
     beforeEach(() => {
-      mount(
+      mounted = mount(
         <Wizard
           onNext={onNext}
           render={({
@@ -138,100 +142,9 @@ describe('Wizard', () => {
       next();
       expect(onNext).toHaveBeenCalled();
     });
-  });
 
-  describe('with routed prop', () => {
-    const context = {
-      history: {
-        push: jest.fn(),
-      },
-    };
-
-    beforeEach(() => {
-      mount(
-        <Wizard
-          routed
-          render={({
-            push: wizardPush,
-          }) => {
-            push = wizardPush;
-            return <noscript />;
-          }}
-        />,
-        { context },
-      );
-    });
-
-    it('should not pass history actions to it\'s parent', () => {
-      push('hufflepuff');
-      expect(context.history.push).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('used with a router', () => {
-    it('should determine the parent path with react-router v4', () => {
-      const context = {
-        route: {
-          match: {
-            url: 'hogwarts',
-          },
-        },
-      };
-
-      mount(
-        <Wizard
-          routed
-          render={({
-            _setSteps,
-            location: wizardLocation,
-          }) => {
-            setSteps = _setSteps;
-            location = wizardLocation;
-            return <noscript />;
-          }}
-        />,
-        { context },
-      );
-
-      setSteps([
-        { path: 'gryffindor' },
-      ]);
-
-      expect(location.pathname).toEqual('hogwarts/gryffindor');
-    });
-
-    it('should determine the parent path with react-router v3', () => {
-      const context = {
-        router: {
-          getCurrentLocation: () => ({
-            pathname: 'hogwarts',
-          }),
-          params: {
-            splat: '/gryffindor',
-          },
-        },
-      };
-
-      mount(
-        <Wizard
-          routed
-          render={({
-            _setSteps,
-            location: wizardLocation,
-          }) => {
-            setSteps = _setSteps;
-            location = wizardLocation;
-            return <noscript />;
-          }}
-        />,
-        { context },
-      );
-
-      setSteps([
-        { path: 'gryffindor' },
-      ]);
-
-      expect(location.pathname).toEqual('hogwarts/gryffindor');
+    afterEach(() => {
+      mounted.unmount();
     });
   });
 });

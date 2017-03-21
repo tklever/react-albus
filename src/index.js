@@ -12,11 +12,8 @@
  * the License.
  */
 
-import Wizard from './components/Wizard';
-
+export Wizard from './components/Wizard';
 export Step from './components/Step';
 export Steps from './components/Steps';
 export Navigation from './components/Navigation';
 export withWizard from './withWizard';
-
-export default Wizard;

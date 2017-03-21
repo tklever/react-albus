@@ -13,9 +13,8 @@
  */
 
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import Wizard, { Step, Steps, Navigation } from '../src';
+import { Wizard, Step, Steps, Navigation } from '../src';
 import FirstStep from './components/FirstStep';
 import SecondStep from './components/SecondStep';
 import ThirdStep from './components/ThirdStep';

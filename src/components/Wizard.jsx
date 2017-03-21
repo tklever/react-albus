@@ -13,7 +13,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
-import { createHistory, createMemoryHistory } from 'history';
+import { createMemoryHistory } from 'history';
 
 class Wizard extends Component {
   state = {
@@ -33,25 +33,19 @@ class Wizard extends Component {
         previous: this.previous,
         push: this.push,
         go: this.go,
-        location: this.location,
+        history: this.props.history,
       },
     };
   }
 
   componentWillMount() {
-    this.unlisten = this.history.listen((location) => {
-      const { action, pathname } = location;
-      this.location = location;
-
+    this.unlisten = this.props.history.listen(({ pathname }) => {
       const path = pathname.split('/').pop();
       const step = this.steps.filter(s => s.path === path)[0];
       if (step) {
         this.setState({
           step,
         });
-      } else if (!this.props.routed && this.parentHistory[action.toLowerCase()]) {
-        this.unlisten();
-        this.parentHistory[action.toLowerCase()](pathname);
       }
     });
   }
@@ -73,66 +67,32 @@ class Wizard extends Component {
     this.setInitialStep();
   }
 
-  getParentPath() {
-    // If we are not routed, parentPath isn't necessary
-    if (!this.props.routed) {
-      return '';
-    }
-
-    const { route, router } = this.context;
-
-    if (route) {
-      // If we are using react-router v4, use the match url
-      return route.match.url;
-    } else if (router) {
-      // If we are using react-router v3, use the splat param
-      return router.getCurrentLocation().pathname.replace(router.params.splat, '');
-    }
-
-    // If we are not within a router, use the basename provided
-    return this.props.basename;
-  }
-
-  history = this.props.routed ? createHistory() : createMemoryHistory();
-  parentHistory = this.context.history;
-  parentPath = this.getParentPath();
-  forward = true;
-  location = this.history.getCurrentLocation();
   steps = [];
+  previous = this.props.history.goBack;
+  go = this.props.history.go;
 
   get paths() {
     return this.steps.map(s => s.path);
   }
 
-  fixPath = path => path.replace(/\/\/+/g, '/');
+  fixPath = pathname => pathname.replace(/\/\/+/g, '/');
 
   push = (step) => {
     const nextStep = step || this.paths[this.paths.indexOf(this.state.step.path) + 1];
-    this.history.push(this.fixPath(`${this.parentPath}/${nextStep}`));
+    this.props.history.push(this.fixPath(`${this.props.basename}/${nextStep}`));
   }
 
   replace = (step) => {
     const nextStep = step || this.paths[0];
-    this.history.replace(this.fixPath(`${this.parentPath}/${nextStep}`));
+    this.props.history.replace(this.fixPath(`${this.props.basename}/${nextStep}`));
   }
 
   next = () => {
-    this.forward = true;
     if (this.props.onNext) {
       this.props.onNext(this.state.step, this.steps, this.push);
     } else {
       this.push();
     }
-  }
-
-  previous = () => {
-    this.forward = false;
-    this.history.goBack();
-  }
-
-  go = (amount) => {
-    this.forward = amount > 0;
-    this.history.go(amount);
   }
 
   render() {
@@ -147,8 +107,16 @@ Wizard.propTypes = {
   basename: PropTypes.string,
   children: PropTypes.node,
   className: PropTypes.string,
+  history: PropTypes.shape({
+    entries: PropTypes.array,
+    go: PropTypes.func,
+    goBack: PropTypes.func,
+    listen: PropTypes.func,
+    location: PropTypes.object,
+    push: PropTypes.func,
+    replace: PropTypes.func,
+  }),
   onNext: PropTypes.func,
-  routed: PropTypes.bool,
   render: PropTypes.func,
 };
 
@@ -156,15 +124,9 @@ Wizard.defaultProps = {
   basename: '',
   children: null,
   className: '',
+  history: createMemoryHistory(),
   onNext: null,
-  routed: false,
   render: null,
-};
-
-Wizard.contextTypes = {
-  router: PropTypes.object,
-  route: PropTypes.object,
-  history: PropTypes.object,
 };
 
 Wizard.childContextTypes = {
