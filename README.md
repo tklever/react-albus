@@ -20,16 +20,27 @@ const Simple = () =>
     <Steps>
       <Step path="firstStep">
         <h1>First Step</h1>
-        <Navigation render={({ next }) => <button onClick={next}>Next</button>} />
+        <Navigation
+          render={({ next }) =>
+            <button onClick={next}>Next</button>}
+        />
       </Step>
       <Step path="secondStep">
         <h1>Second Step</h1>
-        <Navigation render={({ next }) => <button onClick={next}>Next</button>} />
-        <Navigation render={({ previous }) => <button onClick={previous}>Previous</button>} />
+        <Navigation
+          render={({ next, previous }) =>
+            <div>
+              <button onClick={next}>Next</button>
+              <button onClick={previous}>Previous</button>
+            </div>}
+        />
       </Step>
       <Step path="thirdStep">
         <h1>Third Step</h1>
-        <Navigation render={({ previous }) => <button onClick={previous}>Previous</button>} />
+        <Navigation
+          render={({ previous }) =>
+            <button onClick={previous}>Previous</button>}
+        />
       </Step>
     </Steps>
   </Wizard>;
@@ -45,7 +56,7 @@ To explore [more examples](https://github.com/americanexpress/react-albus/tree/m
 - [`<Steps>`](#steps)
 - [`<Navigation>`](#navigation)
 - [`withWizard`](#withwizard)
-- [`context.wizard`](#context.wizard)
+- [`context.wizard`](#contextwizard)
 
 ---
 
@@ -68,7 +79,7 @@ CSS classes to be added to the `<div>` created by `<Wizard>`.
 A function that will be used as the render function of `<Wizard>`.
 
 ##### Params
-* `wizard`: The [`context.wizard`](#context.wizard) object.
+* `wizard`: The [`context.wizard`](#contextwizard) object.
 
 ---
 
@@ -77,9 +88,9 @@ Wraps all the content that will be conditionally shown when the step is active.
 
 #### Props
 ##### `path`: string
-Unique string for each component, if `routed`, this will be used as the path in the URL.
+Unique key for each step.
 ##### `name`: string *(optional)*
-A name for the step that can be used in the `<Progress>` component in order to display step titles.
+A name for the step that can later be accessed on [`context.wizard`](#contextwizard).
 ##### `className`: string *(optional)*
 CSS classes to be added to the `<div>` created by `<Step>`.
 
@@ -95,18 +106,18 @@ An object describing the current step with the signature: `{ path: string, name:
 ---
 
 ### `<Navigation>`
-Wrapper component for the Navigation of your `<Step>`.  Extends its child's props with [`context.wizard`](#context.wizard) and passes [`context.wizard`](#context.wizard) to its render prop.
+Exposes the Wizard navigation functionality for your components to use.  Extends its child's props with [`context.wizard`](#contextwizard) and passes [`context.wizard`](#contextwizard) to its render prop.
 #### Props
 ##### `render(wizard)`: function *(optional)*
 A function that will be used as the render function of `<Navigation>`.
 
 ##### Params
-* `wizard`: The [`context.wizard`](#context.wizard) object.
+* `wizard`: The [`context.wizard`](#contextwizard) object.
 
 ---
 
 ### `withWizard()`
-A higher order component that spreads [`context.wizard`](#context.wizard) across the wrapped component's props.
+A higher order component that spreads [`context.wizard`](#contextwizard) across the wrapped component's props.
 
 ---
 
@@ -130,11 +141,11 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import { Wizard } from 'react-albus';
 
-const RoutedWizard = () =>
+const RoutedWizard = ({ children }) =>
   <Route
-    render={({ match: { url }, history }) =>
+    render={({ history, match: { url } }) =>
       <Wizard history={history} basename={url}>
-        ...
+        {children}
       </Wizard>}
   />;
 
