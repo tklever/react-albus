@@ -19,7 +19,7 @@ import { Wizard } from '../../src';
 
 describe('Wizard', () => {
   let mounted;
-  let setSteps;
+  let init;
   let step;
   let next;
   let previous;
@@ -52,14 +52,14 @@ describe('Wizard', () => {
       mounted = mount(
         <Wizard
           render={({
-            _setSteps,
+            _init,
             step: wizardStep,
             next: wizardNext,
             previous: wizardPrevious,
             push: wizardPush,
             go: wizardGo,
           }) => {
-            setSteps = _setSteps;
+            init = _init;
             step = wizardStep;
             next = wizardNext;
             previous = wizardPrevious;
@@ -70,7 +70,7 @@ describe('Wizard', () => {
         />,
       );
 
-      setSteps([
+      init([
         { path: 'gryffindor' },
         { path: 'slytherin' },
       ]);
@@ -122,17 +122,17 @@ describe('Wizard', () => {
         <Wizard
           onNext={onNext}
           render={({
-            _setSteps,
+            _init,
             next: wizardNext,
           }) => {
-            setSteps = _setSteps;
+            init = _init;
             next = wizardNext;
             return <noscript />;
           }}
         />,
       );
 
-      setSteps([
+      init([
         { path: 'gryffindor' },
         { path: 'slytherin' },
       ]);

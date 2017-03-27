@@ -20,10 +20,10 @@ import { Steps } from '../../src';
 const FakeStep = () => <div />;
 
 describe('Steps', () => {
-  it('should call _setSteps', () => {
+  it('should call _init', () => {
     const context = {
       wizard: {
-        _setSteps: jest.fn(),
+        _init: jest.fn(),
         steps: [],
       },
     };
@@ -35,13 +35,13 @@ describe('Steps', () => {
       { context },
     );
     // eslint-disable-next-line no-underscore-dangle
-    expect(context.wizard._setSteps).toHaveBeenCalled();
+    expect(context.wizard._init).toHaveBeenCalled();
   });
 
-  it('should not call _setSteps if wizard already has steps', () => {
+  it('should not call _init if wizard already has steps', () => {
     const context = {
       wizard: {
-        _setSteps: jest.fn(),
+        _init: jest.fn(),
         steps: [
           'we',
           'have',
@@ -57,7 +57,7 @@ describe('Steps', () => {
       { context },
     );
     // eslint-disable-next-line no-underscore-dangle
-    expect(context.wizard._setSteps).not.toHaveBeenCalled();
+    expect(context.wizard._init).not.toHaveBeenCalled();
   });
 
   it('should render correct child if controlled', () => {
