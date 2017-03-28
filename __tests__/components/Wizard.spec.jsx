@@ -12,10 +12,16 @@
  * the License.
  */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { mount } from 'enzyme';
 
 import { Wizard } from '../../src';
+
+const ExposeWizard = ({ children }, context) => children(context);
+ExposeWizard.contextTypes = {
+  wizard: PropTypes.object,
+  wizardInit: PropTypes.func,
+};
 
 describe('Wizard', () => {
   let mounted;
@@ -26,7 +32,7 @@ describe('Wizard', () => {
   let push;
   let go;
 
-  describe('without render prop', () => {
+  describe('with render prop', () => {
     beforeEach(() => {
       const history = {
         replace: () => null,
@@ -34,11 +40,11 @@ describe('Wizard', () => {
       };
 
       mounted = mount(
-        <Wizard history={history} />,
+        <Wizard history={history} render={() => null} />,
       );
     });
 
-    it('should render without steps', () => {
+    it('should render', () => {
       expect(mounted).toMatchSnapshot();
     });
 
@@ -50,24 +56,28 @@ describe('Wizard', () => {
   describe('with no other props', () => {
     beforeEach(() => {
       mounted = mount(
-        <Wizard
-          render={({
-            _init,
-            step: wizardStep,
-            next: wizardNext,
-            previous: wizardPrevious,
-            push: wizardPush,
-            go: wizardGo,
-          }) => {
-            init = _init;
-            step = wizardStep;
-            next = wizardNext;
-            previous = wizardPrevious;
-            push = wizardPush;
-            go = wizardGo;
-            return <noscript />;
-          }}
-        />,
+        <Wizard>
+          <ExposeWizard>
+            {({
+              wizard: {
+                step: wizardStep,
+                next: wizardNext,
+                previous: wizardPrevious,
+                push: wizardPush,
+                go: wizardGo,
+              },
+              wizardInit,
+            }) => {
+              step = wizardStep;
+              next = wizardNext;
+              previous = wizardPrevious;
+              push = wizardPush;
+              go = wizardGo;
+              init = wizardInit;
+              return null;
+            }}
+          </ExposeWizard>
+        </Wizard>,
       );
 
       init([
@@ -119,17 +129,20 @@ describe('Wizard', () => {
 
     beforeEach(() => {
       mounted = mount(
-        <Wizard
-          onNext={onNext}
-          render={({
-            _init,
-            next: wizardNext,
-          }) => {
-            init = _init;
-            next = wizardNext;
-            return <noscript />;
-          }}
-        />,
+        <Wizard onNext={onNext}>
+          <ExposeWizard>
+            {({
+              wizard: {
+                next: wizardNext,
+              },
+              wizardInit,
+            }) => {
+              next = wizardNext;
+              init = wizardInit;
+              return null;
+            }}
+          </ExposeWizard>
+        </Wizard>,
       );
 
       init([

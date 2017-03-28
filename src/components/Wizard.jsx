@@ -27,7 +27,6 @@ class Wizard extends Component {
   getChildContext() {
     return {
       wizard: {
-        _init: this.init,
         step: this.state.step,
         steps: this.steps,
         next: this.next,
@@ -36,6 +35,7 @@ class Wizard extends Component {
         go: this.props.history.go,
         history: this.props.history,
       },
+      wizardInit: this.init,
     };
   }
 
@@ -125,6 +125,7 @@ Wizard.defaultProps = {
 
 Wizard.childContextTypes = {
   wizard: PropTypes.object,
+  wizardInit: PropTypes.func,
 };
 
 export default Wizard;

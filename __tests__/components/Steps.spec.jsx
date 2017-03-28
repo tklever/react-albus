@@ -23,9 +23,9 @@ describe('Steps', () => {
   it('should call _init', () => {
     const context = {
       wizard: {
-        _init: jest.fn(),
         steps: [],
       },
+      wizardInit: jest.fn(),
     };
 
     shallow(
@@ -34,20 +34,19 @@ describe('Steps', () => {
       </Steps>,
       { context },
     );
-    // eslint-disable-next-line no-underscore-dangle
-    expect(context.wizard._init).toHaveBeenCalled();
+    expect(context.wizardInit).toHaveBeenCalled();
   });
 
   it('should not call _init if wizard already has steps', () => {
     const context = {
       wizard: {
-        _init: jest.fn(),
         steps: [
           'we',
           'have',
           'steps',
         ],
       },
+      wizardInit: jest.fn(),
     };
 
     shallow(
@@ -56,8 +55,7 @@ describe('Steps', () => {
       </Steps>,
       { context },
     );
-    // eslint-disable-next-line no-underscore-dangle
-    expect(context.wizard._init).not.toHaveBeenCalled();
+    expect(context.wizardInit).not.toHaveBeenCalled();
   });
 
   it('should render correct child if controlled', () => {
