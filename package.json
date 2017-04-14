@@ -1,6 +1,6 @@
 {
   "name": "react-albus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React component library for building declarative multi-step flows.",
   "files": [
     "lib"
@@ -16,10 +16,7 @@
     "posttest": "npm run lint",
     "prepublish": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/americanexpress/react-albus.git"
-  },
+  "repository": "americanexpress/react-albus",
   "keywords": [
     "react",
     "react-component",
@@ -40,6 +37,7 @@
   },
   "dependencies": {
     "history": "^4.6.0",
+    "prop-types": "^15.5.8",
     "react": "^15.4.2"
   },
   "devDependencies": {
@@ -64,8 +62,9 @@
     "node-sass": "^4.5.0",
     "react-addons-css-transition-group": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
-    "react-dom": "^15.0.1",
+    "react-dom": "^15.5.4",
     "react-router-dom": "^4.0.0",
+    "react-test-renderer": "^15.5.4",
     "rimraf": "^2.5.2",
     "sass-loader": "^6.0.2",
     "style-loader": "^0.13.2",
